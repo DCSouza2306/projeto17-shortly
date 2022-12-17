@@ -3,7 +3,6 @@ import connection from "../database/db.js";
 
 export const signupBodyValidation = async (req, res, next) => {
   const user = req.body;
-    console.log(user)
   const { error } = usersSchema.validate(user, { abortEarly: false });
 
   if (error) {
@@ -13,11 +12,11 @@ export const signupBodyValidation = async (req, res, next) => {
 
   const emailExist = await connection.query(
     `SELECT * FROM users WHERE email = $1`,
-    [req.body.email]
+    [user.email]
   );
 
-  if(emailExist.rows[0]){
-    return res.status(409).send({message: "Email já cadastrado"})
+  if (emailExist.rows) {
+    return res.status(409).send({ message: "Email já cadastrado" });
   }
 
   req.user = user;
