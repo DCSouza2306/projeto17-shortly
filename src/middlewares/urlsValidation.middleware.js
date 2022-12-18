@@ -15,3 +15,30 @@ export async function urlBodyValidation(req, res, next) {
 
   next();
 }
+
+export async function urlUserVerify(req, res, next) {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const urlExist = await connection.query(`SELECT * FROM urls WHERE id = ${id}`);
+
+    if (!urlExist.rows)
+      return res.status(404).send({ message: "Url inexistente" });
+
+    const userUrlVerify = await connection.query(
+      `SELECT * FROM creates WHERE id_user = ${userId} AND id_url = ${id}`
+    );
+
+    if (!userUrlVerify.rows)
+      return res
+        .status(401)
+        .send({ message: "Url não pertence a esse usuário" });
+    await connection.query(`DELETE FROM creates WHERE id_user = ${userId} AND id_url = ${id}`)
+    req.urlId = id;
+    next();
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+}

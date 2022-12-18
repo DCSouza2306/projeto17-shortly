@@ -46,12 +46,37 @@ export async function getUrl(req, res) {
   }
 }
 
-export async function getOpenUrl(req, res){
-    try{
-        const {shortUrl} = req.params;
-        
-    } catch(e){
-        console.log(e);
-        res.sendStatus(500)
-    }
+export async function getOpenUrl(req, res) {
+  try {
+    const { shortUrl } = req.params;
+
+    const document = await connection.query(
+      `SELECT * FROM urls WHERE "shortUrl" = '${shortUrl}'`
+    );
+
+    if (!document.rows) return res.sendStatus(404);
+
+    const id = document.rows[0].id;
+    const url = document.rows[0].url;
+
+    await connection.query(`INSERT INTO acess (id_url) VALUES ($1)`, [id]);
+
+    res.redirect(`${url}`);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+}
+
+export async function deleteUrl(req, res) {
+  try {
+    const urlId = req.urlId;
+
+    await connection.query(`DELETE FROM urls WHERE id = ${urlId}`);
+
+    res.sendStatus(204);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
 }
