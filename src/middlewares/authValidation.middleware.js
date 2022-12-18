@@ -27,7 +27,7 @@ export default async function authValidation(req, res, next) {
       );
 
       if (!user.rows || !user.rows[0].id)
-        return res.status(401).send({ message: "Token invalido" });
+        return res.status(404).send({ message: "Usuário não encontrado" });
 
       req.userId = user.rows[0].id;
       return next();

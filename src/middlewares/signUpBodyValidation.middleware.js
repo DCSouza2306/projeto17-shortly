@@ -15,7 +15,7 @@ export const signupBodyValidation = async (req, res, next) => {
     [user.email]
   );
 
-  if (emailExist.rows) {
+  if (emailExist.rows[0]) {
     return res.status(409).send({ message: "Email já cadastrado" });
   }
 
