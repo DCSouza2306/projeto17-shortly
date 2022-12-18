@@ -30,3 +30,13 @@ export async function getUsers(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function getRanking(req, res){
+  try{
+    
+
+  } catch(e){
+    console.log(e);
+    res.sendStatus(500)
+  }
+}
