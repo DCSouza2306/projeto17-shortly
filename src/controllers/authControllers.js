@@ -22,7 +22,7 @@ export async function postSignUp(req, res) {
 
 export async function postLogin(req, res) {
   const user = req.user;
-  const token = jwt.sign({ id: user.id }, process.env.SECRET_JWT, {
+  const token = jwt.sign({ id: user.rows[0].id }, process.env.SECRET_JWT, {
     expiresIn: 86400,
   });
 
