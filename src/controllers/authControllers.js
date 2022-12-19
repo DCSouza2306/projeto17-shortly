@@ -28,7 +28,7 @@ export async function postLogin(req, res) {
 
   try {
     await connection.query(
-      `INSERT INTO sessions (user_id, token) VALUES ($1,$2)`,
+      `INSERT INTO sessions (id_user, token) VALUES ($1,$2)`,
       [user.rows[0].id, token]
     );
 

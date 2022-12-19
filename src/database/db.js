@@ -9,7 +9,7 @@ const connection = new Pool({
   port: 5432,
   user: 'postgres',
   password: 'copadomundo2306',
-  database: 'shortly'
+  database: 'shortly_api'
   /* connectionString: process.env.DATABASE_URL, */
 });
 

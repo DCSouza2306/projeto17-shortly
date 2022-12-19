@@ -11,17 +11,9 @@ export async function postUrl(req, res) {
     shortUrl = nanoid();
 
     await connection.query(
-      `INSERT INTO urls (url, "shortUrl") VALUES ($1,$2)`,
-      [url, shortUrl]
+      `INSERT INTO urls (id_user, url, "shortUrl") VALUES ($1,$2,$3)`,
+      [idUser,url, shortUrl]
     );
-
-    const id = await connection.query(`SELECT * FROM urls ORDER BY id DESC`);
-
-    await connection.query(
-      `INSERT INTO creates (id_user, id_url) VALUES ($1,$2)`,
-      [idUser, id.rows[0].id]
-    );
-
     res.status(201).send({ shortUrl });
   } catch (e) {
     console.log(e);
@@ -54,12 +46,13 @@ export async function getOpenUrl(req, res) {
       `SELECT * FROM urls WHERE "shortUrl" = '${shortUrl}'`
     );
 
-    if (!document.rows) return res.sendStatus(404);
 
-    const id = document.rows[0].id;
+    if (!document.rows[0]) return res.sendStatus(404);
+
+    const count = document.rows[0].count + 1;
     const url = document.rows[0].url;
 
-    await connection.query(`INSERT INTO acess (id_url) VALUES ($1)`, [id]);
+    await connection.query(`UPDATE urls SET count = ${count} WHERE "shortUrl" = '${shortUrl}'`);
 
     res.redirect(`${url}`);
   } catch (e) {

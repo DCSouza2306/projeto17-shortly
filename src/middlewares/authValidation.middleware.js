@@ -26,7 +26,7 @@ export default async function authValidation(req, res, next) {
         `SELECT * FROM users WHERE id = ${decoded.id}`
       );
 
-      if (!user.rows || !user.rows[0].id)
+      if (!user.rows[0])
         return res.status(404).send({ message: "Usuário não encontrado" });
 
       req.userId = user.rows[0].id;

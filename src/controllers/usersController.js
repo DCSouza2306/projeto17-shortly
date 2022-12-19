@@ -5,38 +5,47 @@ export async function getUsers(req, res) {
     const userId = req.userId;
 
     const userData = await connection.query(
-      `SELECT users.id, users.name, COUNT (acess.id) AS "visitCount"
+      `SELECT 
+      users.id, 
+      users.name, 
+      SUM (urls.count) AS "visitCount"
     FROM users
-    JOIN creates ON users.id = creates.id_user
-    JOIN acess ON creates.id_url = acess.id_url
-    JOIN urls ON urls.id = creates.id_url
+    JOIN urls ON users.id = urls.id_user
     WHERE users.id = ${userId}
     GROUP BY users.id;`
     );
 
-    const shortenData =
-      await connection.query(`SELECT urls.id, urls."shortUrl", urls.url, COUNT(acess.id) AS "visitCount" 
-    FROM urls
-    JOIN acess ON acess.id_url = urls.id
-    JOIN creates ON acess.id_url = creates.id_url
-    WHERE creates.id_user = ${userId}
-    GROUP BY urls.id, creates.id_user `);
+    const shortenData = await connection.query(`
+      SELECT id, "shortUrl", url, "count" AS "visitCount" 
+      FROM urls 
+      WHERE id_user = ${userId}
+      ORDER BY "count" DESC`);
 
-    userData.rows[0] = {...userData.rows[0], shortenedUrls: shortenData.rows}
+    userData.rows[0] = { ...userData.rows[0], shortenedUrls: shortenData.rows };
 
-    res.send(userData.rows[0])
+    res.send(userData.rows[0]);
   } catch (e) {
     console.log(e);
     res.sendStatus(500);
   }
 }
 
-export async function getRanking(req, res){
-  try{
-    
-
-  } catch(e){
+export async function getRanking(req, res) {
+  try {
+    const ranking = await connection.query(`
+      SELECT 
+	       users.id, 
+	       users.name, 
+  	  COUNT (urls.count) AS "linkCount",
+	    COALESCE(SUM (urls.count),0) AS "visitCount"
+      FROM users
+      LEFT JOIN urls ON users.id = urls.id_user
+      GROUP BY users.id
+      ORDER BY "visitCount" DESC
+      LIMIT 10;`);
+    res.send(ranking.rows)
+  } catch (e) {
     console.log(e);
-    res.sendStatus(500)
+    res.sendStatus(500);
   }
 }

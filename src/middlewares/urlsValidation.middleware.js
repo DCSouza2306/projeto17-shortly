@@ -27,14 +27,13 @@ export async function urlUserVerify(req, res, next) {
       return res.status(404).send({ message: "Url inexistente" });
 
     const userUrlVerify = await connection.query(
-      `SELECT * FROM creates WHERE id_user = ${userId} AND id_url = ${id}`
+      `SELECT * FROM urls WHERE id_user = ${userId}`
     );
 
     if (!userUrlVerify.rows)
       return res
         .status(401)
         .send({ message: "Url não pertence a esse usuário" });
-    await connection.query(`DELETE FROM creates WHERE id_user = ${userId} AND id_url = ${id}`)
     req.urlId = id;
     next();
   } catch (e) {
