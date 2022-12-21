@@ -1,12 +1,11 @@
 import { Router } from "express";
-import {signupBodyValidation} from '../middlewares/signUpBodyValidation.middleware.js'
-import { postSignUp, postLogin } from "../controllers/authControllers.js";
-import { loginValidation } from "../middlewares/loginValidation.middleware.js";
+import create from "../controllers/authControllers.js";
+import { loginValidation, signupValidation } from "../middlewares/authValidation.middleware.js";
 
 const router = Router();
 
-router.post("/signup", signupBodyValidation, postSignUp)
+router.post("/signup", signupValidation, create.signUp)
 
-router.post("/signin", loginValidation, postLogin)
+router.post("/signin", loginValidation, create.login)
 
 export default router;

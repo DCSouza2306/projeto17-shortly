@@ -1,5 +1,5 @@
-import connection from "../database/db.js";
-import { urlSchema } from "../models/urlSchema.js";
+import { urlSchema } from "../models/Url.js";
+import { getUrlById, getUrlByUserId } from "../repository/urlsRepository.js";
 
 export async function urlBodyValidation(req, res, next) {
   const url = req.body;
@@ -21,23 +21,19 @@ export async function urlUserVerify(req, res, next) {
     const { id } = req.params;
     const userId = req.userId;
 
-    const urlExist = await connection.query(`SELECT * FROM urls WHERE id = ${id}`);
-
+    const urlExist = await getUrlById(id);
     if (!urlExist.rows)
       return res.status(404).send({ message: "Url inexistente" });
 
-    const userUrlVerify = await connection.query(
-      `SELECT * FROM urls WHERE id_user = ${userId}`
-    );
-
+    const userUrlVerify = await getUrlByUserId(userId);
     if (!userUrlVerify.rows)
       return res
         .status(401)
         .send({ message: "Url não pertence a esse usuário" });
+  
     req.urlId = id;
     next();
   } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+    res.status(500).send(e);
   }
 }
