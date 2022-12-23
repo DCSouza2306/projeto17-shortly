@@ -2,7 +2,11 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { loginSchema, usersSchema } from "../models/Users.js";
-import { findUserByEmail, findUserById} from "../repository/usersRepository.js";
+import {
+  findUserByEmail,
+  findUserById,
+} from "../repository/usersRepository.js";
+import { schemaValidation } from "./schemaValidate.middleware.js";
 
 dotenv.config();
 
@@ -39,17 +43,14 @@ export default async function authValidation(req, res, next) {
 }
 
 export async function loginValidation(req, res, next) {
-  const user = req.body;
-  const { email, password } = user;
-
-  const { error } = loginSchema.validate(user, { abortEarly: false });
-
-  if (error) {
-    const errors = error.details.map((detail) => detail.message);
-    return res.status(422).send({ message: errors });
-  }
-
   try {
+    const user = req.body;
+    const { email, password } = user;
+
+    const errors = schemaValidation(loginSchema, user, res);
+    if (errors) {
+      return errors;
+    }
     const { rows } = await findUserByEmail(email);
     if (!rows[0])
       return res.status(401).send({ message: "Email ou senha invalidos" });
@@ -68,11 +69,10 @@ export async function loginValidation(req, res, next) {
 
 export async function signupValidation(req, res, next) {
   const user = req.body;
-  const { error } = usersSchema.validate(user, { abortEarly: false });
+  const errors = schemaValidation(usersSchema, user, res);
 
-  if (error) {
-    const errors = error.details.map((detail) => detail.message);
-    return res.status(422).send({ message: errors });
+  if (errors) {
+    return errors;
   }
 
   const { rows } = await findUserByEmail(user.email);

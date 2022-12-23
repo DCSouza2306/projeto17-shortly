@@ -1,14 +1,14 @@
 import { urlSchema } from "../models/Url.js";
 import { getUrlById, getUrlByUserId } from "../repository/urlsRepository.js";
+import { schemaValidation } from "./schemaValidate.middleware.js";
 
 export async function urlBodyValidation(req, res, next) {
   const url = req.body;
 
-  const { error } = urlSchema.validate(url, { abortEarly: false });
+  const errors  = schemaValidation(urlSchema, url, res)
 
-  if (error) {
-    const errors = error.details.map((detail) => detail.message);
-    return res.status(422).send({ message: errors });
+  if(errors){
+    return errors;
   }
 
   req.url = url;
