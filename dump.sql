@@ -172,7 +172,7 @@ INSERT INTO public.users VALUES (4, 'Uchiha Madara', 'madara.uchiha@email.com', 
 -- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sessions_id_seq', 2, true);
+SELECT pg_catalog.setval('public.sessions_id_seq', 4, true);
 
 
 --
@@ -186,7 +186,7 @@ SELECT pg_catalog.setval('public.urls_id_seq', 8, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 4, true);
+SELECT pg_catalog.setval('public.users_id_seq', 5, true);
 
 
 --

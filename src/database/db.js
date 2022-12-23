@@ -11,6 +11,7 @@ const connection = new Pool({
   password: "copadomundo2306",
   database: "shortly_api", */
   connectionString: process.env.DATABASE_URL,
+  ssl: true,
 });
 
 export default connection;
