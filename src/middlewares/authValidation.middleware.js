@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import connection from "../database/db.js";
 import bcrypt from "bcrypt";
 import { loginSchema, usersSchema } from "../models/Users.js";
-import { getUserById, getUserByEmail } from "../repository/usersRepository.js";
+import { findUserByEmail, findUserById} from "../repository/usersRepository.js";
 
 dotenv.config();
 
@@ -25,7 +24,7 @@ export default async function authValidation(req, res, next) {
       if (error)
         return res.status(401).send({ message: "Token inválido ou expirado" });
 
-      const { rows } = await getUserById(decoded.id);
+      const { rows } = await findUserById(decoded.id);
 
       if (!rows[0])
         return res.status(404).send({ message: "Usuário não encontrado" });
@@ -51,7 +50,7 @@ export async function loginValidation(req, res, next) {
   }
 
   try {
-    const { rows } = await getUserByEmail(email);
+    const { rows } = await findUserByEmail(email);
     if (!rows[0])
       return res.status(401).send({ message: "Email ou senha invalidos" });
 
@@ -76,7 +75,7 @@ export async function signupValidation(req, res, next) {
     return res.status(422).send({ message: errors });
   }
 
-  const { rows } = await getUserByEmail(user.email);
+  const { rows } = await findUserByEmail(user.email);
 
   if (rows[0]) {
     return res.status(409).send({ message: "Email já cadastrado" });

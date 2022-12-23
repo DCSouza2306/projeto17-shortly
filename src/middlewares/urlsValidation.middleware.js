@@ -34,6 +34,7 @@ export async function urlUserVerify(req, res, next) {
     req.urlId = id;
     next();
   } catch (e) {
+    console.log(e)
     res.status(500).send(e);
   }
 }

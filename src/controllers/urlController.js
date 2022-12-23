@@ -4,6 +4,7 @@ import {
   getUrlByShortUrl,
   insertUrl,
   updateUrlCount,
+  deleteUrlById
 } from "../repository/urlsRepository.js";
 
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwyz", 6);
@@ -28,9 +29,9 @@ export async function getUrl(req, res) {
     const { rows } = await getUrlById(id);
     if (!rows[0]) return res.status(404).send({ message: "Url não existe" });
     const objectSend = {
-      id: rows.id,
-      shortUrl: rows.shortUrl,
-      url: rows.url,
+      id: rows[0].id,
+      shortUrl: rows[0].shortUrl,
+      url: rows[0].url,
     };
     res.status(200).send(objectSend);
   } catch (e) {
@@ -61,11 +62,10 @@ export async function deleteUrl(req, res) {
   try {
     const urlId = req.urlId;
 
-    await deleteUrl(urlId);
+    await deleteUrlById(urlId);
 
     res.sendStatus(204);
   } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+    res.status(500).send(e);
   }
 }

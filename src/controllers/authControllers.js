@@ -10,7 +10,7 @@ async function signUp(req, res) {
 
   try {
     await insertUsers(name, email, passwordHash);
-    res.send(200);
+    res.sendStatus(200);
   } catch (e) {
     res.status(500).send(e);
   }

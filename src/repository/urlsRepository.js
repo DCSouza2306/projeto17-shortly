@@ -9,8 +9,8 @@ export async function getUrlByUserId(userId) {
 }
 
 export async function getUrlByShortUrl(shortUrl) {
-  return connection.query(`SELECT * FROM urls WHERE "shortUrl" = '$1'`, [
-    shortUrl,
+  return connection.query(`SELECT * FROM urls WHERE "shortUrl" = $1`, [
+    shortUrl
   ]);
 }
 
@@ -23,10 +23,10 @@ export async function insertUrl(idUser, url, shortUrl) {
 
 export async function updateUrlCount(count, shortUrl) {
   return connection.query(
-    `UPDATE urls SET count = $1 WHERE "shortUrl" = '$2'`,[count, shortUrl]
+    `UPDATE urls SET count = $1 WHERE "shortUrl" = $2`,[count, shortUrl]
   );
 }
 
-export async function deleteUrl(id){
+export async function deleteUrlById(id){
     return connection.query(`DELETE FROM urls WHERE id = $1`, [id]);
 }
